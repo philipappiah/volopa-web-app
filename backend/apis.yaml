@@ -1,0 +1,507 @@
+openapi: "3.0.0"
+info:
+  version: "v1"
+  title: Volopa take home challenge Open API
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:4000
+paths:
+
+  /auth/signup:
+    post:
+      summary: User signup
+      operationId: userSignUp
+      tags:
+        - authentication
+      requestBody:
+          required: true
+          description: The user to register or sign up
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: Philip
+                  email:
+                    type: string
+                    example: philip@volopa.co.uk
+                  password:
+                    type: string
+                    description: must have length of 8 characters or more
+                    example: test1234
+                  passwordConfirm:
+                    type: string
+                    example: test1234                  
+      responses:
+        '201':
+          description: Created User object with JWT authentication token
+          content:
+            application/json:
+              schema:    
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT Bearer authentication token
+                  user:
+                    description: Created user object
+                    type: object
+                    properties:
+                        name:
+                          type: string
+                          description: Name of user
+                        email:
+                          type: string
+                          description: Email of user
+                  
+        '422': 
+          description: Validation error
+
+  /auth/login:
+    post:
+      summary: User login
+      operationId: userLogin
+      tags:
+        - authentication
+      requestBody:
+          required: true
+          description: Login details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    example: philip@volopa.co.uk
+                  password:
+                    type: string
+                    example: test1234
+      responses:
+        '200':
+          description: User object with JWT authentication token
+          content:
+            application/json:
+              schema:    
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT Bearer authentication token
+                  refreshToken:
+                    type: string
+                    description: JWT Bearer refresh token
+                  valid:
+                    type: boolean
+                    description: User auth token status - true for valid token or false for invalid token
+                  user:
+                    description: User object
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Name of user
+                      email:
+                        type: string
+                        description: Email of user
+        '404': 
+          description: User not found
+
+          
+
+  /auth/isLoggedIn:
+    get:
+      summary: Validate user authentication token
+      operationId: isLoggedIn
+      tags:
+        - authentication
+    
+      responses:
+        '200':
+          description: User auth token valid
+          content:
+            application/json:
+              schema:    
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                    description: User auth token status - true for valid token or false for invalid token
+                  user:
+                    description: User object for valid token or null for invalid token
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Name of user
+                      email:
+                        type: string
+                        description: Email of user
+          '401':
+            description: User no longer exists
+          '404': 
+            description: token expired
+
+
+  /auth/refreshToken:
+    post:
+      summary: get new access token using a refresh token
+      operationId: refreshToken
+      tags:
+        - authentication
+      requestBody:
+          required: true
+          description: refresh token body
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  refreshToken:
+                    type: string
+                    description: User refresh token
+              
+      responses:
+        '200':
+          description: User object with JWT authentication token
+          content:
+            application/json:
+              schema:    
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT Bearer authentication token
+                  refreshToken:
+                    type: string
+                    description: JWT Bearer refresh token
+                  valid: 
+                    type: boolean
+                    description: User auth token status - true for valid token or false for invalid token
+                  user:
+                    description: User object
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: Name of user
+                      email:
+                        type: string
+                        description: Email of user
+        '401':
+          description: User no longer exists
+        '404': 
+          description: Refresh token invalid or has expired. Login required!
+        
+        
+
+
+
+  /auth/logout:
+    get:
+      summary: User logout
+      operationId: userLogout
+      tags:
+        - authentication
+      responses:
+        '200':
+          description: User logged out
+      
+       
+    
+
+
+  /users:
+
+    get:
+      summary: List all users
+      operationId: listUsers
+      tags:
+        - users
+      parameters:
+        - name: limit
+          in: query
+          description: How many items to return at one time (max 100)
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: A paged array of users
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/Users"
+        '401': 
+          description: Unauthorized
+        
+                
+                        
+  /users/{userId}:
+    get:
+      summary: Info for a specific user
+      operationId: showUserById
+      tags:
+        - users
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The id of the user to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        '404':
+          description: No user found!
+        '422': 
+          description: cast error
+        '401': 
+          description: Unauthorized
+
+  
+  /currencies:
+
+    post:
+      summary: Add currency
+      operationId: addCurrency
+      tags:
+        - currencies
+      requestBody:
+          required: true
+          description: The currency to add
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/Currency"
+                  
+      responses:
+        '201':
+          description: User created
+        '422': 
+          description: Validation error
+       
+    get:
+      summary: List all currencies
+      operationId: listCurrencies
+      tags:
+        - currencies
+      parameters:
+        - name: limit
+          in: query
+          description: How many items to return at one time (max 100)
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: A paged array of available currencies
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/Currencies"
+
+  /currencies/convert:
+    get:
+      summary: Convert amount from one currency to another
+      operationId: convertCurrency
+      tags:
+        - currencies
+      parameters:
+        - in: query
+          name: from
+          schema:
+            type: string
+          description: The currency to convert from
+          example: GBP
+        - in: query
+          name: to
+          schema:
+            type: string
+          description: The currency to convert to
+          example: EUR
+        - in: query
+          name: amount
+          schema:
+            type: number
+          description: The amount to be converted
+          example: 1000
+
+      responses:
+        '200':
+          description: Currency object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  
+                  from:
+                    type: string
+                    description: The currency converted from
+                  to:
+                    type: string
+                    description: The currency converted to
+                  rate: 
+                    type: number
+                    description: Current rate of the 'from' currency to the 'to' currency
+                  value: 
+                    type: number
+                    description: Converted value
+        '404':
+          description: Currency not found
+        '422': 
+          description: Validation error
+        
+                
+                        
+  /currencies/{currencyId}:
+    get:
+      summary: Info for a specific currency
+      operationId: showCurrencyById
+      tags:
+        - currencies
+      parameters:
+        - name: currencyId
+          in: path
+          required: true
+          description: The id of the currency to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Currency object
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Currency"
+        '404':
+          description: No currency found!
+        '422': 
+          description: cast error
+    
+    patch:
+      summary: Update a specific currency
+      operationId: updateCurrencyById
+      tags:
+        - currencies
+      parameters:
+        - name: currencyId
+          in: path
+          required: true
+          description: The id of the currency to update
+      requestBody:
+          required: true
+          description: The currency fields to update
+          content:
+            application/json:
+              schema:
+                type: object
+       
+      responses:
+        '200':
+          description: Currency updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Currency"
+        '404':
+          description: No currency found!
+        '422': 
+          description: cast error
+
+    delete:
+      summary: Delete a specific currency
+      operationId: deleteCurrencyById
+      tags:
+        - currencies
+      parameters:
+        - name: currencyId
+          in: path
+          required: true
+          description: The id of the currency to delete
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Currency deleted
+        '404':
+          description: No currency found
+        '422': 
+          description: cast error
+
+
+
+  
+        
+  
+    
+  
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - category
+        - title
+        - cost
+      properties:
+        id:
+          type: string
+          description: string generated by the server/database; not part of input.
+        name:
+          type: string
+          description: Name of user
+        email:
+          type: string
+          description: Email of user
+        password:
+          type: string
+          description: User password. User password is hashed to improve security
+       
+
+    
+    Currency:
+      type: object
+      required:
+        - name
+        - rate
+      properties:
+        id:
+          type: string
+          description: string generated by the server/database; not part of input.
+        name:
+          type: string
+          description: Short name of currency e.g GBP 
+        longName:
+          type: string
+          description: Long name of currency e.g British Pound
+        rate:
+          type: number
+          description: Currency rate relative to the USD e.g 1 GP = 1.22 USD - The rate of the currency GBP is 1.22
+        popularity:
+          type: number
+          description: Popularity index of currency. Must be between 1 and 10. Common or popular have high index between 5 and 10 while less common ones have index between 1 - 4
+      
+
+    Users:
+      type: array
+      items:
+        $ref: "#/components/schemas/User"
+    Currencies:
+      type: array
+      items:
+        $ref: "#/components/schemas/Currency"
+
+   

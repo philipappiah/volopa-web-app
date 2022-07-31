@@ -32,6 +32,6 @@ app.use('/api/v1/users', userRoutes)
 app.use('/api/v1/currencies', currencyRoutes)  
 
 
-app.get("/", (req:Request, res:Response) => res.json({message: `Volopa Take Home Challege API V1. Visit 'http://localhost:4000/api-docs' to view open api docs and endpoints`}));
+app.get("/", (req:Request, res:Response) => res.json({message: `Volopa web app API V1. Visit 'http://localhost:4000/api-docs' to view open api docs and endpoints`}));
 
 export default app;

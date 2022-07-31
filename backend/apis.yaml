@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 info:
   version: "v1"
-  title: Volopa take home challenge Open API
+  title: Volopa web app Open API
   license:
     name: MIT
 servers:

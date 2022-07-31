@@ -9,11 +9,11 @@ export const swaggerDocs = {
       openapi: "3.0.0",
      
       info: {
-        title: "Volopa take home challenge Open API",
+        title: "Volopa web app Open API",
         version: "v1",
         
         description:
-          "API endpoints for Volopa take home challenge Open API",
+          "API endpoints for Volopa web app",
         license: {
           name: "MIT",
           url: "https://spdx.org/licenses/MIT.html",

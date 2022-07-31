@@ -54,7 +54,8 @@ Make sure you have [Docker](https://www.docker.com/) and [Docker-Compose](https:
 Docker version 20.10.10 or higher
 
 ```bash
-docker-compose up -d
+docker-compose build
+docker-compose up
 ```
 
 Your node backend should now be running on [localhost:4000](http://localhost:4000/).

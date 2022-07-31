@@ -1,6 +1,6 @@
 import { CatchExpressError } from "../utils/errorHandlers";
 import { ResponseHandlers } from "../utils/responseHandler";
-import {Response, Request, NextFunction} from 'express'
+import { Response, Request, NextFunction } from 'express'
 import { UserModel } from "../models/user.model";
 
 class UserController {
@@ -19,20 +19,20 @@ class UserController {
 
     getUser = CatchExpressError(async (req: Request, res: Response, next: NextFunction) => {
 
-      const document = await UserModel.findById(req.params.id)
+        const document = await UserModel.findById(req.params.id)
 
-      if (!document) {
-          return (res.status(404).send({
-              status: 'fail',
-              message: 'No document found!'
+        if (!document) {
+            return (res.status(404).send({
+                status: 'fail',
+                message: 'No document found!'
 
-          }))
+            }))
 
-      }
+        }
 
-      res.status(200).send(document)
+        res.status(200).send(document)
 
-  })
+    })
 
 }
 

@@ -282,7 +282,25 @@ paths:
           content:
             application/json:    
               schema:
-                $ref: "#/components/schemas/Currency"
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: GBP
+                    description: short name of currrency
+                  longName:
+                    type: string
+                    example: British Pound
+                    description: long name of currency
+                  rate:
+                    type: number
+                    example: 1.22
+                    description: Currency rate relative to the USD e.g 1 GP = 1.22 USD - The rate of the currency GBP is 1.22
+                  popularity:
+                    type: number
+                    example: 10
+                    description: Popularity index of currency. Must be between 1 and 10. Common or popular have high index between 5 and 10 while less common ones have index between 1 - 4 (optional)
+      
                   
       responses:
         '201':

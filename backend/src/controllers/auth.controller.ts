@@ -1,10 +1,13 @@
 import { CatchExpressError } from "../utils/errorHandlers";
-import { ResponseHandlers } from "../utils/responseHandler";
 import {Response, Request, NextFunction} from 'express'
 import { UserModel, User } from "../models/user.model";
-const crypto = require('crypto');
+import { JWT_SECRET, REFRESH_TOKEN_SECRET, JWT_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN, COOKIE_EXPIRES_IN} from "../config/jwtConfig";
+
+
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
+
+
 
 
 require('dotenv').config();
@@ -12,17 +15,17 @@ require('dotenv').config();
 
 class AuthController {
 
-    createToken = (id:string, secret:string | undefined, expiry:string | undefined) => {
+    createToken = (id:string, secret:string , expiry:string ) => {
         return jwt.sign({ id }, secret, {
-          expiresIn: expiry
+          expiresIn: expiry || COOKIE_EXPIRES_IN
         });
       };
 
 
 
     sendJWToken = async (user:User, statusCode:number, req:Request, res:Response) => {
-        const token = this.createToken(user._id, process.env.JWT_SECRET, process.env.JWT_EXPIRES_IN);
-        const refreshToken = this.createToken(user._id,process.env.REFRESH_TOKEN_SECRET, process.env.REFRESH_TOKEN_EXPIRES_IN )
+        const token = this.createToken(user._id, process.env.JWT_SECRET || JWT_SECRET, process.env.JWT_EXPIRES_IN || JWT_EXPIRES_IN);
+        const refreshToken = this.createToken(user._id,process.env.REFRESH_TOKEN_SECRET || REFRESH_TOKEN_SECRET, process.env.REFRESH_TOKEN_EXPIRES_IN || REFRESH_TOKEN_EXPIRES_IN )
         
       
         const expiry : number =  Number(process.env.COOKIE_EXPIRES_IN) 

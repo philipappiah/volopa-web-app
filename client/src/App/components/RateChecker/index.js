@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect  } from 'react'
 import { CurrencyContext } from '../../../Contexts/currencyContext';
-import { Row, Col, Typography, Card, Form, Input, Select, Space, Progress, Button, Alert, Modal } from 'antd'
+import { Row, Col, Typography, Card, Form, Input, Select, Space, Progress, Button, Modal } from 'antd'
 import { getConversion } from '../../../APIs';
 
 function RateChecker() {
@@ -85,15 +85,19 @@ function RateChecker() {
 
 
     useEffect(() => {
+        
 
+      
         getConversion(fromCurrency, toCurrency, amount).then(res=>{
             
             const {value, rate} = res.data
             setValue(value)
+            
             setFixedRate(rate)
         }).catch(err=>{
             console.log(err)
         })
+    
 
     },[])
 
@@ -107,7 +111,7 @@ function RateChecker() {
             <Row>
                 <Col span={24}>
               
-      <Modal title="Basic Modal" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+      <Modal title="Rate Checker" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
         <p>Amount : {amount}</p>
         <p>From : {fromCurrency}</p>
         <p>To : {toCurrency} </p>

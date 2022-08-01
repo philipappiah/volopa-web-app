@@ -15,7 +15,6 @@ const PrivateRoute = ( props ) => {
  
   const location = useLocation()
 
-  console.log(isAuth)
 
   return isAuth ? (
     <>{children}</>
